@@ -1,0 +1,25 @@
+# Maintainer: Dean G. <deangalvin3@gmail.com>
+# Contributor: Dean G. <deangalvin3@gmail.com>
+pkgname=srvadmin-omilcore
+pkgver=9.1.0
+pkgrel=1
+pkgdesc="Core install package that provides the tools necessary for the rest of the Systems Management install packages."
+arch=('x86_64')
+url="http://support.dell.com"
+license=('Dell End User License Agreement')
+groups=('srvadmin-all')
+depends=('libsmbios')
+options=('!strip' '!emptydirs')
+install=${pkgname}.install
+source_x86_64=("http://linux.dell.com/repo/community/openmanage/910/xenial/pool/main/s/srvadmin-omilcore/${pkgname}_${pkgver}_amd64.deb")
+sha512sums_x86_64=('d7271d1ee88c67450378c6d510a7c3b31203f2b3f52956fa4e9c88fd51ea24cd3f5aa2aa8f9c811fd58bcc7a60d8b69e363feb83f03d4edca54a1881eb82c584')
+
+package(){
+	tar xf data.tar.xz -C "${pkgdir}"
+  rm "${pkgdir}/etc/profile.d/srvadmin-path.csh"
+  rm "${pkgdir}/etc/profile.d/srvadmin-path.sh"
+  rmdir "${pkgdir}/etc/profile.d"
+  rm "${pkgdir}/etc/omreg.cfg"
+  rmdir "${pkgdir}/etc"
+	install -D -m644 "${pkgdir}/opt/dell/srvadmin/share/doc/LICENSE.txt" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

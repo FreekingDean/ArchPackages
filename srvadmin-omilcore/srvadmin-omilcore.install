@@ -1,0 +1,25 @@
+# TODO Pre-Install/Upgrade stop OSMA services
+
+post_install() {
+	cat /opt/dell/srvadmin/etc/omreg.d/*.cfg > /opt/dell/srvadmin/etc/omreg.cfg
+	ldconfig
+}
+
+post_upgrade() {
+	post_install
+}
+
+pre_remove() {
+  rm -f /opt/dell/srvadmin/etc/omreg.d/omreg-clireg.cfg
+  rm -f /opt/dell/srvadmin/var/run/freeze-*
+  rm -rf /opt/dell/srvadmin/lib64/srvadmin-omilcore/savedsettings/*
+}
+
+post_remove() {
+	if [ -x /opt/dell/srvadmin/etc/omreg.d ]; then
+    cat /opt/dell/srvadmin/etc/omreg.d/*.cfg > /opt/dell/srvadmin/etc/omreg.cfg
+  else
+    rm /opt/dell/srvadmin/etc/omreg.cfg
+  fi
+	ldconfig
+}
