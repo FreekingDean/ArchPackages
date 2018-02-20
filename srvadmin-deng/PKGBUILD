@@ -1,0 +1,19 @@
+# Maintainer: Dean G. <deangalvin3@gmail.com>
+# Contributor: Dean G. <deangalvin3@gmail.com>
+pkgname=srvadmin-deng
+pkgver=9.1.0
+pkgrel=1
+pkgdesc="Stores and manages objects used for systems management."
+arch=('i686' 'x86_64')
+url="http://support.dell.com"
+license=('')
+groups=('')
+depends=('srvadmin-omilcore>=9.1.0')
+options=('!strip' '!emptydirs')
+install=${pkgname}.install
+source_x86_64=("http://linux.dell.com/repo/community/openmanage/910/xenial/pool/main/s/srvadmin-deng/srvadmin-deng_9.1.0-1_amd64.deb")
+sha512sums_x86_64=('d2875ea3a7051caae81b07537672f4adfc0941b938238c7be4b6962e347c1698945c3c296a3f9fef561929d7d28a5c98409c96fcb2921f0176f9e276449d5fb4')
+
+package(){
+	tar xf data.tar.xz -C "${pkgdir}"
+}

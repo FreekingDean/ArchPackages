@@ -1,0 +1,55 @@
+pre_install() {
+	# stop service if not stopped
+	if [ "$1" = "upgrade" ]; then
+	    # Version <= 8.3 had a different init location
+	    currVer=`echo "$2" | sed 's/-1//g'`
+	    isVer830=`awk 'BEGIN{ print "'$currVer'"<="'8.3.0'" }'`
+	    if [ $isVer830 -eq 1 ]; then
+	        # Fixes a bug in previous version
+	        if [ -f /etc/init.d/dataeng ]; then
+	            invoke-rc.d dataeng stop > /dev/null 2>&1 ||:
+	            update-rc.d -f dataeng remove
+	            rm -f /etc/init.d/dataeng
+	        fi
+	    else
+	        invoke-rc.d dataeng stop > /dev/null 2>&1 ||:
+	    fi
+	fi
+
+	if [ -x /opt/dell/srvadmin/lib64/srvadmin-deng/unregister-deng.sh ]; then
+	    /opt/dell/srvadmin/lib64/srvadmin-deng/unregister-deng.sh ||:
+	fi
+}
+
+pre_upgrade() {
+	pre_install
+}
+
+post_install() {
+	cat /opt/dell/srvadmin/etc/omreg.d/*.cfg > /opt/dell/srvadmin/etc/omreg.cfg 2>/dev/null ||:
+}
+
+post_upgrade() {
+  post_install
+}
+
+pre_remove() {
+	if [ "$1" = "remove" ]; then
+	    if [ -x /opt/dell/srvadmin/lib64/srvadmin-deng/unregister-deng.sh ]; then
+	         /opt/dell/srvadmin/lib64/srvadmin-deng/unregister-deng.sh ||:
+	    fi
+
+	    # remove old disable/log/lock files, ipc/mutex, dirs
+	    rm -f /var/log/dcomsa32.log
+	    rm -f /var/lock/subsys/dataeng
+	    rm -f /opt/dell/srvadmin/var/lib/srvadmin-deng/dcsnmp.off
+	    rm -f /opt/dell/srvadmin/var/lib/srvadmin-deng/dcfwsnmp.off
+	    rm -f /opt/dell/srvadmin/var/lib/openmanage/.ipc/.dcsupflk*
+	fi
+}
+
+post_remove() {
+	cat /opt/dell/srvadmin/etc/omreg.d/*.cfg > /opt/dell/srvadmin/etc/omreg.cfg 2>/dev/null ||:
+
+	ldconfig
+}
